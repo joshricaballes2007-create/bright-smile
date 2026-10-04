@@ -1,0 +1,43 @@
+<!--
+  Python verifies the admin role before sending private records to this template.
+  Tab links select one table; page links let the admin view the next 50 rows.
+  Hiding a table in HTML is not a security lock; the real access check happens in Python.
+-->
+{% extends 'base.html' %}
+{% block content %}
+<!-- Python checks admin access first. Tables lang ito, walang email system. -->
+<section class="container admin-layout">
+{% if not user %}
+<div class="account-panel admin-login"><h1>Admin sign in</h1>
+<form action="/auth/login" method="post"><input name="csrf" type="hidden" value="{{ csrf }}">
+<label>Email address<input name="email" type="email" autocomplete="username" required></label>
+<label>Password<input name="password" type="password" autocomplete="current-password" required minlength="8" maxlength="128"></label>
+<button class="button" type="submit">Sign in</button></form></div>
+{% else %}
+<h1>Clinic admin</h1><p>{{ user.email }}</p>
+<form action="/auth/logout" method="post"><input name="csrf" type="hidden" value="{{ csrf }}"><button class="text-link" type="submit">Sign out</button></form>
+<!-- These links switch tables without extra JavaScript. Piliin lang ang tab na kailangan. -->
+<nav class="admin-tabs" aria-label="Admin tables">
+<a href="/admin?tab=bookings&bookings_page={{ bookings_page }}&messages_page={{ messages_page }}" {% if tab == 'bookings' %}aria-current="page"{% endif %}>Bookings</a>
+<a href="/admin?tab=messages&bookings_page={{ bookings_page }}&messages_page={{ messages_page }}" {% if tab == 'messages' %}aria-current="page"{% endif %}>Contact messages</a>
+</nav>
+{% if tab == 'bookings' %}
+<h2>Bookings</h2>
+<!-- Each table shows 50 rows at a time. Next page para makita pa ang ibang records. -->
+<div class="admin-table"><table><thead><tr><th scope="col">Patient</th><th scope="col">Email</th><th scope="col">Service</th><th scope="col">Visit time (PHT)</th><th scope="col">Status</th><th scope="col">Reference</th><th scope="col">Type</th></tr></thead><tbody>
+<!--
+  Each loop creates one row from one saved appointment, including guest bookings.
+  DEMO labels identify fictional records; an empty table shows a short message.
+  Text escaping keeps patient names as text, hindi executable HTML code.
+-->
+{% for row in appointments %}<tr><td>{{ row.patient_name or 'Not recorded' }}</td><td>{{ row.patient_email or 'Not recorded' }}</td><td>{{ row.service }}</td><td>{{ row.when }}</td><td>{{ row.status|replace('_', ' ') }}</td><td>{{ row.cal_booking_uid }}</td><td>{{ 'DEMO' if row.is_demo else 'Real' }}</td></tr>{% else %}<tr><td colspan="7">No bookings yet.</td></tr>{% endfor %}
+</tbody></table></div>
+<p class="admin-paging">{% if bookings_page > 1 %}<a href="/admin?tab=bookings&bookings_page={{ bookings_page - 1 }}&messages_page={{ messages_page }}">Previous bookings</a>{% endif %} Page {{ bookings_page }} {% if appointments_more %}<a href="/admin?tab=bookings&bookings_page={{ bookings_page + 1 }}&messages_page={{ messages_page }}">Next bookings</a>{% endif %}</p>
+{% else %}
+<h2>Contact messages</h2><div class="admin-table"><table><thead><tr><th scope="col">Received (PHT)</th><th scope="col">Name</th><th scope="col">Email</th><th scope="col">Message</th><th scope="col">Type</th></tr></thead><tbody>
+{% for row in contact_messages %}<tr><td>{{ row.when }}</td><td>{{ row.name }}</td><td>{{ row.email }}</td><td class="admin-message">{{ row.message }}</td><td>{{ 'DEMO' if row.is_demo else 'Real' }}</td></tr>{% else %}<tr><td colspan="5">No messages yet.</td></tr>{% endfor %}
+</tbody></table></div>
+<p class="admin-paging">{% if messages_page > 1 %}<a href="/admin?tab=messages&messages_page={{ messages_page - 1 }}&bookings_page={{ bookings_page }}">Previous messages</a>{% endif %} Page {{ messages_page }} {% if contact_messages_more %}<a href="/admin?tab=messages&messages_page={{ messages_page + 1 }}&bookings_page={{ bookings_page }}">Next messages</a>{% endif %}</p>
+{% endif %}
+{% endif %}</section>
+{% endblock %}

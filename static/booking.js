@@ -1,4 +1,7 @@
 // Booking is the only page that needs a bigger script. Python pa rin ang nagche-check ng actual schedule.
+// Keep references to the calendar, service selector, and form so we can update them.
+// selectedDay and selectedSlot remember the choice while moving between booking steps.
+// Temporary browser state lang ito; a saved reservation still needs Python and Cal.com.
 const shell = document.getElementById('booking-shell');
 const service = document.getElementById('booking-service');
 const calendar = document.getElementById('calendar-grid');
@@ -16,13 +19,22 @@ let slotRequest = null;
 function formatDay(day, options = {month:'long', day:'numeric', year:'numeric'}) {
   return new Intl.DateTimeFormat('en-PH', {...options, timeZone:'Asia/Manila'}).format(new Date(`${day}T12:00:00+08:00`));
 }
+// Build a date as YYYY-MM-DD with leading zeroes, like 2026-10-05.
+// This format matches the text Python expects and keeps date comparisons predictable.
+// Consistent format ang gamit para hindi malito sa month/day order.
 function isoDay(y, m, d) { return `${y}-${String(m + 1).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
+// Changing the date clears the old time selection and disables Continue.
+// A time from yesterday must not remain selected after choosing another day.
+// Kailangan ulit pumili ng slot na kabilang sa bagong date.
 function resetTime() {
   selectedSlot = null;
   nextButton.disabled = true;
   document.getElementById('selected-summary').textContent = 'Choose a time that suits your day.';
 }
 
+// Rebuild the month as button elements, with blank spaces before day one.
+// Disable dates outside the booking window and label each button for screen readers.
+// Display lang ito; Python checks the date again when the visitor submits a booking.
 function renderCalendar() {
   calendar.replaceChildren();
   document.getElementById('calendar-month').textContent = formatDay(isoDay(year, month, 1), {month:'long', year:'numeric'});
@@ -50,6 +62,9 @@ function renderCalendar() {
   document.getElementById('next-month').disabled = nextMonth > limit;
 }
 
+// Selecting a day asks Python for the available start times for that service.
+// async lets the browser wait for the reply while the page remains usable.
+// Habang naghihintay, show a loading message instead of stale buttons from the old date.
 async function selectDay(day) {
   selectedDay = day;
   resetTime();
@@ -94,6 +109,9 @@ async function selectDay(day) {
   }
 }
 
+// Add or subtract a month, then redraw the calendar buttons.
+// JavaScript's Date handles year changes when moving past December or January.
+// Para hindi kailangan gumawa ng separate code para sa bawat month.
 function changeMonth(amount) {
   const changed = new Date(year, month + amount, 1);
   year = changed.getFullYear(); month = changed.getMonth();
@@ -102,6 +120,9 @@ function changeMonth(amount) {
 document.getElementById('previous-month').addEventListener('click', () => changeMonth(-1));
 document.getElementById('next-month').addEventListener('click', () => changeMonth(1));
 
+// Another service may take a different amount of time and use another Cal.com event.
+// Return to the calendar and reload slots instead of reusing the previous service's time.
+// Halimbawa, a 60-minute filling needs a longer opening than a 30-minute checkup.
 service.addEventListener('change', () => {
   document.getElementById('visit-duration').textContent = `${service.selectedOptions[0].dataset.minutes} minutes`;
   document.getElementById('booking-details').hidden = true;
@@ -110,6 +131,9 @@ service.addEventListener('change', () => {
   if (selectedDay) selectDay(selectedDay);
 });
 
+// Continue moves from choosing a time to entering the patient details.
+// Require a selected slot and repeat the chosen service, date, and time in the summary.
+// Focus moves to the name field para madaling magpatuloy gamit ang keyboard.
 nextButton.addEventListener('click', () => {
   if (!selectedSlot) return;
   document.getElementById('booking-picker').hidden = true;
@@ -123,6 +147,9 @@ document.getElementById('back-to-calendar').addEventListener('click', () => {
   nextButton.focus();
 });
 
+// Send patient details, consent, service, day, and selected start time to Python.
+// Disable the button while waiting, then use the server reply to show the result.
+// Hindi proof ng booking ang button click; kailangan ng successful provider response.
 form.addEventListener('submit', async event => {
   event.preventDefault();
   const button = document.getElementById('confirm-booking');
@@ -135,10 +162,13 @@ form.addEventListener('submit', async event => {
     const response = await fetch('/api/bookings', {method:'POST', headers:{'Content-Type':'application/json', 'X-CSRF-Token':document.querySelector('meta[name="csrf-token"]').content}, body:JSON.stringify({...values, consent:form.elements.consent.checked, service:service.value, day:selectedDay, start:selectedSlot.start})});
     const result = await response.json();
     if (!response.ok) throw new Error(result.detail || 'We could not complete your visit. Please try again.');
+    // Separate a practice preview, a confirmed reservation, and a pending booking request.
+    // The server also tells us if the reservation is a labeled demo event for presentation.
+    // Para tama ang message at hindi mangako ng confirmed visit na wala pa.
     const preview = result.mode === 'preview';
-    document.getElementById('result-label').textContent = preview ? 'A little look ahead' : 'Your next step';
+    document.getElementById('result-label').textContent = result.demo ? 'Demo appointment' : preview ? 'A little look ahead' : 'Your next step';
     document.getElementById('result-title').textContent = preview ? 'Your visit preview is ready.' : result.status === 'accepted' ? 'Your appointment is booked.' : 'Your booking request is received.';
-    document.getElementById('result-message').textContent = preview ? 'This is a preview only. No appointment has been reserved, no email has been sent, and your details have not been saved.' : 'Check your email for appointment details and next steps from the clinic.';
+    document.getElementById('result-message').textContent = result.demo ? 'Your labeled demo event is saved in Cal.com. This is presentation data and does not reserve dental treatment.' : preview ? 'This is a preview only. No appointment has been reserved, no email has been sent, and your details have not been saved.' : 'Check your email for appointment details and next steps from the clinic.';
     const list = document.getElementById('result-details'); list.replaceChildren();
     // Use textContent, not raw HTML, for form values. Para hindi maging code ang input ng tao.
     const rows = [['Care', result.service], ['Date', formatDay(selectedDay)], ['Time', `${selectedSlot.label} · UTC+8`]];
@@ -155,6 +185,9 @@ form.addEventListener('submit', async event => {
   } finally { button.disabled = false; service.disabled = false; }
 });
 
+// Return to the calendar and fetch fresh times when starting another visit.
+// The time just booked may no longer be available after the reservation succeeds.
+// Hindi inuulit ang previous POST; a new visit needs a new date and time selection.
 document.getElementById('start-again').addEventListener('click', () => {
   document.getElementById('booking-result').hidden = true;
   document.getElementById('booking-picker').hidden = false;

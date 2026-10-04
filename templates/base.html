@@ -1,3 +1,8 @@
+<!--
+  This is the shared frame: head settings, navigation, main content, and footer.
+  Child templates fill named blocks instead of copying the whole layout for each page.
+  Isang edit dito updates the shared parts everywhere, like changing a school letterhead.
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,7 +45,7 @@
         <div><a class="brand" href="/"><img src="/static/icons/tooth.svg" alt="" width="29" height="29"><span>bright smile.</span></a><p>A little care today.<br>A healthier smile tomorrow.</p></div>
         <div><h2>Discover</h2><a href="/about">About us</a><a href="/services">Our services</a><a href="/book">Book a visit</a></div>
         <div><h2>Let's connect</h2><a href="/contact">Contact us</a><a href="/account">Patient account</a><a href="/privacy">Privacy notice</a></div>
-        <div><h2>Come say hello</h2><p>{{ clinic.address }}</p><p>Monday–Saturday<br>9:00 AM–5:00 PM</p><span class="small">Lunch break: 12:00–1:00 PM</span></div>
+        <div><h2>Come say hello</h2><p>{{ clinic.address }}</p><p>{{ clinic.hours }}</p></div>
       </div>
       <div class="footer-bottom"><span>© {{ year }} Bright Smile Dental Clinic</span><span>Made with care. For your smile.</span></div>
       <p class="prototype-credit">ICCT case-study website · Joshua Caballes</p>

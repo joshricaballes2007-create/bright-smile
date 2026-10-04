@@ -10,6 +10,9 @@ from fastapi.testclient import TestClient
 import app as clinic
 
 
+# Use a pretend browser and fake provider replies to check important app behavior.
+# setUp blanks live settings so these ordinary checks do not create actual appointments.
+# Fake responses let us check access rules and errors nang walang real patient changes.
 class ClinicTests(unittest.TestCase):
     def setUp(self):
         # Empty settings force preview mode. Para safe kahit may real keys sa developer machine.
@@ -26,6 +29,37 @@ class ClinicTests(unittest.TestCase):
     def tearDown(self):
         self.client.close()
         self.env.stop()
+
+    def test_admin_blocks_patient_before_reading_private_tables(self):
+        user = {'id': 'patient', 'app_metadata': {}, 'user_metadata': {'role': 'admin'}}
+        with patch.object(clinic, 'current_user', AsyncMock(return_value=user)), patch.object(clinic, 'supabase_request', AsyncMock()) as database:
+            self.assertEqual(self.client.get('/admin').status_code, 403)
+            database.assert_not_called()
+
+    def test_admin_login_page_has_no_private_records(self):
+        result = self.client.get('/admin')
+        self.assertEqual(result.status_code, 200)
+        self.assertIn('Admin sign in', result.text)
+        self.assertNotIn('Contact messages', result.text)
+
+    def test_admin_reads_both_tables_and_escapes_messages(self):
+        user = {'email': 'admin@example.com', 'app_metadata': {'role': 'admin'}}
+        booking = {'patient_name': 'Patient', 'patient_email': 'patient@example.com', 'service_id': 'checkup', 'starts_at': '2026-10-05T01:00:00Z', 'status': 'accepted', 'cal_booking_uid': 'sample', 'is_demo': True}
+        message = {'name': 'Patient', 'email': 'patient@example.com', 'message': '<script>unsafe</script>', 'created_at': '2026-10-04T01:00:00Z', 'is_demo': True}
+        replies = [httpx.Response(200, json=[booking]), httpx.Response(200, json=[message])]
+        with patch.object(clinic, 'current_user', AsyncMock(return_value=user)), patch.object(clinic, 'supabase_request', AsyncMock(side_effect=replies)) as database:
+            result = self.client.get('/admin')
+            self.assertEqual(result.status_code, 200)
+            self.assertIn('patient@example.com', result.text)
+            self.assertNotIn('&lt;script&gt;unsafe', result.text)
+            self.assertIn('tab=bookings', result.text)
+            result = self.client.get('/admin?tab=messages')
+            self.assertEqual(result.status_code, 200)
+            self.assertIn('&lt;script&gt;unsafe', result.text)
+            self.assertNotIn('<script>unsafe', result.text)
+            self.assertNotIn('Visit time (PHT)', result.text)
+            self.assertEqual(database.await_count, 2)
+            self.assertTrue(all(call.kwargs['secret'] for call in database.await_args_list))
 
     def booking(self):
         slots = self.client.get('/api/slots', params={'service':'checkup','day':self.day}).json()['slots']
@@ -142,6 +176,38 @@ class ClinicTests(unittest.TestCase):
         self.assertEqual(result.cookies['bs_access'],'fake-access')
         self.assertIn('HttpOnly',result.headers['set-cookie'])
         self.assertNotIn('fake-access',result.text)
+
+    def test_demo_booking_uses_separate_event_and_verified_fake_identity(self):
+        details = self.booking()
+        details['email'] = 'different@example.org'
+        user = {'id': 'demo-id', 'email': 'mia.santos@example.com', 'app_metadata': {'is_demo': True}, 'user_metadata': {'full_name': '[DEMO] Mia Santos'}}
+        provider = AsyncMock(return_value={'uid': 'demo-uid', 'status': 'accepted', 'start': details['start']})
+        choices = AsyncMock(return_value=[{'start': details['start'], 'available': True}])
+        with patch.object(clinic, 'current_user', AsyncMock(return_value=user)), patch.object(clinic, 'live_booking', return_value=True), patch.object(clinic, 'available_slots', choices), patch.object(clinic, 'cal_request', provider), patch.dict(os.environ, {'CAL_DEMO_EVENT_CHECKUP': '987'}):
+            response = self.client.post('/api/bookings', json=details, headers=self.headers)
+        self.assertEqual(response.status_code, 200)
+        payload = provider.call_args.kwargs['json']
+        self.assertEqual(payload['eventTypeId'], 987)
+        self.assertEqual(payload['attendee']['email'], user['email'])
+        self.assertNotIn('phoneNumber', payload['attendee'])
+        self.assertTrue(response.json()['demo'])
+
+    def test_missing_demo_event_never_falls_back_to_a_real_visit(self):
+        with patch.dict(os.environ, {'CAL_DEMO_EVENT_CHECKUP': ''}):
+            with self.assertRaises(clinic.HTTPException) as error:
+                clinic.booking_event_id('checkup', demo=True)
+        self.assertEqual(error.exception.status_code, 503)
+
+    def test_database_copy_failure_does_not_repeat_a_confirmed_booking(self):
+        details = self.booking()
+        provider = AsyncMock(return_value={'uid': 'confirmed-uid', 'status': 'accepted', 'start': details['start']})
+        choices = AsyncMock(return_value=[{'start': details['start'], 'available': True}])
+        with patch.object(clinic, 'live_booking', return_value=True), patch.object(clinic, 'available_slots', choices), patch.object(clinic, 'cal_request', provider), patch.object(clinic, 'event_id', return_value=123), patch.object(clinic, 'supabase_request', AsyncMock(return_value=httpx.Response(503))), patch.dict(os.environ, {'SUPABASE_URL': 'https://example.test', 'SUPABASE_SECRET_KEY': 'fake-secret'}):
+            response = self.client.post('/api/bookings', json=details, headers=self.headers)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['uid'], 'confirmed-uid')
+        self.assertFalse(response.json()['history_saved'])
+        provider.assert_awaited_once()
 
 
 if __name__ == '__main__':

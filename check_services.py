@@ -7,6 +7,9 @@ import httpx
 from dotenv import dotenv_values
 
 
+# Check connections without creating patients, uploading code, or reserving visits.
+# Reduce provider replies to status messages instead of printing credential values.
+# Para makita kung tama ang account at project while keeping keys inside .env.
 def main():
     # Read our own file only. Hindi binabago ang keys ng ibang project.
     config = dotenv_values(Path(__file__).with_name('.env'))

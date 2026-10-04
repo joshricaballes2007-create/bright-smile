@@ -8,3 +8,6 @@ __pycache__/
 .vercel/
 .pytest_cache/
 .codex/
+
+.vercel
+.env*

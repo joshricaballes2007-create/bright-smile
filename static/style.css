@@ -1,9 +1,19 @@
 /* These fonts are saved here, not loaded from another website. Para mabilis at private ang pages. */
+/*
+  @font-face gives local font files a name that other style rules can use.
+  font-display:swap shows fallback text while the font finishes loading.
+  Para readable agad ang page kahit mabagal ang connection ng visitor.
+*/
 @font-face{font-family:Inter;src:url('/static/fonts/inter-regular.woff2');font-weight:400;font-style:normal;font-display:swap}
 @font-face{font-family:Inter;src:url('/static/fonts/inter-medium.woff2');font-weight:500;font-style:normal;font-display:swap}
 @font-face{font-family:Inter;src:url('/static/fonts/inter-semibold.woff2');font-weight:600;font-style:normal;font-display:swap}
 
 /* These are the shared colors and sizes. Dito mag-edit para pareho ang buong website. */
+/*
+  These variables hold shared design values, like a box of labeled paint colors.
+  Other rules use var(--ink) or var(--line) instead of repeating color numbers.
+  Isang value lang ang papalitan para consistent ang whole site's colors.
+*/
 :root{--ink:#202936;--muted:#6d737a;--blue:#bdeafa;--blue-dark:#86d1ef;--paper:#fff;--line:#e4e7e9;--mint:#e0f0eb;--peach:#faeadb;--radius:18px;--font:Inter,Arial,sans-serif}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:28px}
@@ -277,6 +287,11 @@ textarea{resize:vertical}
 .booking-result>.text-link{margin-top:20px;font-size:11px}
 
 /* Tablet screens need smaller gaps. Hindi dapat magbanggaan ang text at photos. */
+/*
+  A media query applies its rules only when the screen fits the stated size.
+  Smaller screens need adjusted gaps so the text and images still fit.
+  Hindi bagong website ang mobile view; same HTML, different layout rules lang.
+*/
 @media(max-width:1100px){
  .container{width:calc(100% - 64px)}
  .navigation{gap:20px}.header-inner{gap:20px}.header-actions{gap:13px}
@@ -335,3 +350,21 @@ textarea{resize:vertical}
 
 /* People who prefer less motion get a still page. Walang unnecessary animation para sa kanila. */
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}
+
+/* Give each visit a clear row. Madaling makita ang date at status. */
+.account-visits{list-style:none;padding:0;margin:1rem 0 2rem;max-height:28rem;overflow:auto}.account-visits li{display:grid;gap:.35rem;padding:1rem 0;border-bottom:1px solid #e1e7e9}.account-visits span{font-size:.85rem}
+/* Plain admin tables scroll on phones. Para hindi masikip ang patient details. */
+/*
+  A table can be wider than a phone, so its wrapper allows sideways scrolling.
+  Long messages wrap inside cells instead of stretching the entire page.
+  Para ma-review pa rin ang bookings and messages kahit maliit ang screen.
+*/
+.admin-layout{padding-top:64px;padding-bottom:80px}.admin-layout h2{margin-top:40px}.admin-login{max-width:480px;margin:auto}.admin-table{overflow-x:auto;margin-top:20px}.admin-table table{border-collapse:collapse;width:100%;font-size:14px}.admin-table th,.admin-table td{text-align:left;vertical-align:top;padding:14px;border-bottom:1px solid #dce3e5}.admin-table th{background:#edf7fa}.admin-message{min-width:260px;max-width:500px;white-space:pre-wrap;overflow-wrap:anywhere}.admin-paging{display:flex;gap:20px;margin-top:16px}
+
+/* Show which admin tab is open. May underline para madaling makita ang napili. */
+/*
+  Python adds aria-current to the link for the selected admin table.
+  This rule draws an underline and stronger text for that active link.
+  Style lang ito; the chosen table comes from the tab value in the page URL.
+*/
+.admin-tabs{display:flex;gap:28px;margin-top:32px;border-bottom:1px solid var(--line)}.admin-tabs a{padding:14px 2px;color:var(--muted);border-bottom:3px solid transparent}.admin-tabs a[aria-current="page"]{color:var(--ink);border-color:var(--ink);font-weight:600}.admin-tabs a:hover{color:var(--ink)}

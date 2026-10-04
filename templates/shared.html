@@ -1,4 +1,9 @@
 <!-- These small pieces are reused across pages. Isang edit lang para pareho lahat. -->
+<!--
+  A macro is a reusable template piece, like a small function that returns HTML.
+  Pages give button() a link and label, or give service_list() a list of services.
+  Para iisang design lang ang buttons and lists kahit ginagamit sa maraming pages.
+-->
 {% macro button(url='/book', text='Book an appointment') -%}
 <a href="{{ url }}" class="button">{{ text }}<img src="/static/icons/arrow-up-right.svg" alt=""></a>
 {%- endmacro %}
@@ -7,6 +12,11 @@
 <section class="visit-cta container"><div class="cta-copy"><h2>A healthier smile<br>starts with a hello.</h2><p>Let's make your next dental visit a good one.</p>{{ button('/book', 'Find your time') }}</div><span class="cta-word" aria-hidden="true">bright smile.</span></section>
 {%- endmacro %}
 
+<!--
+  Loop through question-and-answer pairs supplied by Python.
+  Native details and summary elements let the browser open answers without custom scripts.
+  Mas simple ang code, at gumagana pa rin ang FAQ kapag walang JavaScript.
+-->
 {% macro questions(faqs) -%}
 <section class="container faq-section"><div><span class="section-label">A little clarity</span><h2>Good questions.<br>Simple answers.</h2><p class="muted">Everything you need to feel ready<br>for your next visit.</p></div><div class="faq-list">
   <!-- The browser opens these answers even without JavaScript. Gumagana kahit walang script. -->

@@ -1,0 +1,15 @@
+# Deploy only what the website needs. Hindi kasama ang local keys at demo setup tools.
+.env
+.env.*
+.venv
+.git
+.codex
+legacy
+tests
+setup_demo.py
+check_services.py
+deploy_services.py
+requirements-dev.txt
+demo-report.*
+supabase-setup.sql
+*.md
