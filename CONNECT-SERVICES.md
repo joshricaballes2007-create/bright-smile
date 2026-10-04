@@ -46,7 +46,7 @@ No webhook secret or OAuth client secret is needed for this initial API-key inte
 
 - Paste each value after `=` on the matching line. One setting per line; keep comments as they are.
 - Keep `LIVE_BOOKING_ENABLED=false` and `CONTACT_ENABLED=false` during setup.
-- For the local website, keep `SITE_URL=http://127.0.0.1:8000`. Use the real website URL after deployment and configure Supabase Auth Site URL / allowed redirects to match.
+- For local development, use `SITE_URL=http://127.0.0.1:8000`. In production, use `SITE_URL=https://bsmile.vercel.app`. In Supabase Auth URL Configuration, set the Site URL to `https://bsmile.vercel.app` and allow `https://bsmile.vercel.app/account` for email confirmation redirects.
 - This `.env` is a local plain-text configuration file, not an encrypted vault. `.gitignore` excludes it from future Git commits, but manual folder sharing or backups can still include it. Share `.env.example` with teammates; give actual credentials through your password manager or provider dashboard.
 - Do not paste real keys into this guide, README, HTML, JavaScript, screenshots, or chat.
 

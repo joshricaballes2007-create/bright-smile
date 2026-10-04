@@ -1,5 +1,7 @@
 # Bright Smile Dental Clinic
 
+[Visit the website](https://bsmile.vercel.app/)
+
 Hi! I'm a student learning web development, and Bright Smile is my first development project and my first repository on GitHub. This project marks my first step into making commits, organizing my code, and sharing what I'm learning.
 
 I wanted to build something with a clear purpose: a dental clinic website where visitors can learn about the clinic, explore its services, and book an appointment. It's a learning project that I can keep improving as I gain more experience.

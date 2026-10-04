@@ -10,7 +10,7 @@ from dotenv import dotenv_values
 ROOT = Path(__file__).resolve().parent
 PROJECT = 'prj_LlfCX6fNWVfC1P1wTRzM3Q9EUe5E'
 TEAM = 'team_9y5dAdr3262ZFDEIkDdI5Aq4'
-DOMAIN = 'bright-smile-f9fc.vercel.app'
+DOMAIN = 'bsmile.vercel.app'
 
 
 def api(path, payload=None):
