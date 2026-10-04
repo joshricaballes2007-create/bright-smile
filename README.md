@@ -1,72 +1,71 @@
 # Bright Smile Dental Clinic
 
-Python + HTML + CSS + small JavaScript files. No React, Node build, or frontend framework.
-Comments use simple Taglish, roughly 70% English and 30% Tagalog.
+Hi! I'm a student learning web development, and Bright Smile is my first development project and my first repository on GitHub. This project marks my first step into making commits, organizing my code, and sharing what I'm learning.
 
-## Where to find things
+I wanted to build something with a clear purpose: a dental clinic website where visitors can learn about the clinic, explore its services, and book an appointment. It's a learning project that I can keep improving as I gain more experience.
 
-| File/folder | Purpose |
+## About the project
+
+Bright Smile brings clinic information and appointment scheduling together in one website. It includes:
+
+- Home, About Us, Services, and Contact Us pages.
+- An appointment flow for choosing a dental service, date, and time.
+- Patient signup, login, and appointment history when Supabase is configured.
+- A clinic admin page for viewing bookings and contact messages.
+- A responsive layout for phones and computers.
+- Clearly labeled sample accounts and records for demonstrations.
+
+Booking runs in preview mode when live scheduling is not configured. Preview appointments do not reserve real slots. Live scheduling uses Cal.com, while Supabase handles accounts and database records.
+
+## Tools used
+
+- **Python and FastAPI** for the server and form handling.
+- **HTML and Jinja2** for the pages and shared templates.
+- **CSS** for the layout, colors, and responsive design.
+- **JavaScript** for navigation, forms, and the booking calendar.
+- **Supabase** for authentication and the database.
+- **Cal.com** for appointment scheduling.
+- **Vercel** as the hosting platform.
+
+## Project structure
+
+| File or folder | Purpose |
 |---|---|
-| `app.py` | Pages, preview booking, Cal.com adapter, Supabase Auth and contact endpoints |
-| `templates/` | Plain HTML for the pages; `base.html` shares the header/footer |
-| `static/style.css` | Shared design and responsive layouts |
-| `static/main.js` | Mobile menu and contact form |
-| `static/booking.js` | Calendar and appointment steps |
-| `static/images/` | Generated photographs; the doctor PNG has genuine transparency |
-| `static/fonts/`, `static/icons/` | Local Inter font and Phosphor icons |
-| `supabase-setup.sql` | Reviewable schema and access rules; not yet applied anywhere |
-| `.env.example` | Empty settings; copy to private `.env` when ready |
-| `CONNECT-SERVICES.md` | Where to find keys, Cal.com event IDs, and project scope instructions |
-| `vercel.json` | FastAPI hosting configuration |
-| `tests/test_app.py` | API boundary and preview checks |
-| `legacy/` | The original three-file prototype |
+| `app.py` | Website routes and service integrations |
+| `templates/` | HTML page templates |
+| `static/` | Styles, scripts, images, fonts, and icons |
+| `supabase-setup.sql` | Database tables and access rules |
+| `.env.example` | Blank template for local settings |
+| `tests/` | Checks for website behavior and deployment settings |
+| `legacy/` | My original prototype |
 
 ## Run locally
 
+Use Python 3.12 or newer. From the project folder, run these commands in PowerShell:
+
 ```powershell
-uv venv .venv
-uv pip install --python .venv/Scripts/python.exe -r requirements.txt
-.venv/Scripts/python.exe -m uvicorn app:app --host 127.0.0.1 --port 8000 --reload
+python -m venv .venv
+.venv/Scripts/python.exe -m pip install -r requirements.txt
+if (-not (Test-Path .env)) { Copy-Item .env.example .env }
+.venv/Scripts/python.exe -m uvicorn app:app --reload
 ```
 
-Open `http://127.0.0.1:8000/`. Public pages use real paths: `/about`, `/services`, `/contact`, `/book`.
-Patient forms are at `/account`. The old `/index-2.html` URL redirects to the new homepage.
+Open [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser. Keep private keys in `.env` and out of GitHub. See [CONNECT-SERVICES.md](CONNECT-SERVICES.md) for the Supabase and Cal.com settings.
 
-## What works now
-
-- Responsive public pages, service descriptions, native HTML FAQs, mobile navigation.
-- Preview booking: service, Manila calendar, sample slots, validation, and a preview result.
-- The Python health endpoint: `/api/health`.
-- Contact and auth forms return truthful setup messages until configured.
-- Preview bookings do not reserve a slot, send email, or store patient details.
-
-## Connect providers later
-
-1. Choose the clinic's Supabase project, review `supabase-setup.sql`, and apply it there. No database has been created or modified by this rebuild.
-2. Set `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, and a backend-only `SUPABASE_SECRET_KEY`. Never put private keys in HTML or JavaScript.
-3. In Supabase Auth, enable email/password and email confirmation. Configure the Site URL and allowed confirmation URL. The account uses server-side password grant and HttpOnly session cookies; sign-up asks users to confirm email before signing in. No custom password table exists.
-4. Add Cal.com event types for the five services. Set each `CAL_EVENT_*` ID, `CAL_API_KEY`, and `SITE_URL`. Confirm the event lengths, Manila timezone, opening hours, lunch, dentist availability, and in-person location in Cal.com.
-5. Keep `LIVE_BOOKING_ENABLED=false` until a test booking has verified real availability and email delivery. Then set it to `true`; all five event IDs must be configured. The adapter uses [Cal.com slots](https://cal.com/docs/api-reference/v2/slots/get-available-time-slots-for-an-event-type) version `2024-09-04` and [booking creation](https://cal.com/docs/api-reference/v2/bookings/create-a-booking) version `2026-02-25`.
-6. Set `CONTACT_ENABLED=true` only after the contact table is ready. Messages go to Supabase, not email; staff inbox UI/email notifications are future work. Set platform rate limits before enabling a public inbox.
-
-Cal.com is the source of scheduling truth. Supabase appointment history, signed Cal.com webhook syncing, staff queue management, cancellation/rescheduling, password recovery, and email notifications beyond Cal.com's own emails are not implemented in this frontend-focused rebuild. The old prototype remains available as source in `legacy/`.
-
-## Vercel
-
-Import this folder/repository as a **FastAPI** project. `app.py` exports the app, and local static files are mounted under `/static`; Vercel's [FastAPI support](https://vercel.com/docs/frameworks/backend/fastapi) promotes mounted assets to the CDN. No npm build is needed. Add private provider settings in the Vercel environment UI and set `SITE_URL` to the deployment URL. Confirm email redirects after deployment. This project has not been deployed or connected to a Vercel account yet.
-
-## Verification
+To run the existing checks:
 
 ```powershell
 .venv/Scripts/python.exe -m unittest discover -s tests -v
-node --check static/main.js
-node --check static/booking.js
 ```
 
-Provider integrations are covered by mocked boundary tests, not live provider verification. Credentials and a selected deployment project are still needed for live testing.
+## What I'm learning
 
-## Design and assets
+Through this project, I'm learning how to connect pages to a Python server, make layouts work on different screen sizes, validate forms, and use external services. I'm also practicing Git commits and learning how to maintain a repository on GitHub.
 
-The supplied screenshot is the visual reference: pale-blue hero, slim sans-serif type, cutout portrait, rounded photography, light cards, open spacing, charcoal footer. Inter regular is a close visual match; the exact reference font cannot be identified from the image alone. Photos are illustrative and must not be presented as real staff portraits or patient testimonials.
+There is still room to improve the project, especially password recovery, appointment cancellation and rescheduling, and notifications. I plan to work on these as I learn more.
 
-Built-in Image Gen produced three project assets: a transparent Filipino dentist portrait, a candid dental consultation, and a pale-blue dental-room photo. Prompt summaries: friendly dentist with folded arms and soft editorial light; dentist explaining care to a seated patient; bright clean chair and orderly tools. All omit text, logos, and watermarks. Icons come from [Phosphor](https://github.com/phosphor-icons/core) and fonts from [Inter](https://rsms.me/inter/), under their respective open licenses.
+## Image disclaimer and credits
+
+The images used in this project were generated using a free ChatGPT account. They are for demonstration purposes and do not represent actual clinic staff, patients, or facilities.
+
+The website uses [Inter](https://rsms.me/inter/) fonts and [Phosphor](https://github.com/phosphor-icons/core) icons. Their license files are included in `static/fonts/` and `static/icons/`.

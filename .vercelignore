@@ -3,7 +3,7 @@
 .env.*
 .venv
 .git
-.codex
+.local-state
 legacy
 tests
 setup_demo.py

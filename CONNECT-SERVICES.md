@@ -18,14 +18,6 @@ The Python app loads `.env` using this project's folder path. Environment variab
 
 **Scope has a limit:** the keys target a Supabase project, not a Windows folder. A person or app holding a copied key can still use it to reach that same Supabase project. A dedicated project, separate backend key, limited sharing, and table access policies provide the separation. Secret keys bypass RLS and must stay on the backend.
 
-If you connect an AI assistant through Supabase MCP, use a server URL scoped to this project's reference, for example:
-
-```text
-https://mcp.supabase.com/mcp?project_ref=YOUR_PROJECT_REF&read_only=true
-```
-
-Choose the exact project during MCP setup. The `project_ref` restriction limits that connection to one remote project; read-only mode prevents database writes. This is separate from the website's `.env`. No MCP account connection or global configuration has been created by this setup. Client-side workspace configuration and account permissions are separate from the server's project scope.
-
 No Supabase database password or account-wide personal access token is needed for the current website integration.
 
 ## Collect Cal.com values
@@ -42,7 +34,7 @@ Create five event types for the clinic:
 | Tooth extraction | 60 minutes | `CAL_EVENT_EXTRACTION` |
 | Follow-up care | 30 minutes | `CAL_EVENT_FOLLOWUP` |
 
-Paste the **numeric event type ID** for each event, not its public booking URL. If the ID is visible in the event editor URL, copy that number. If your dashboard does not show the ID, fill the API key first and leave the event IDs blank; we can retrieve the IDs using the read-only event-types API when you ask us to verify the connection.
+Paste the **numeric event type ID** for each event, not its public booking URL. If the ID is visible in the event editor URL, copy that number. You can also retrieve IDs using Cal.com's event-types API.
 
 In Cal.com, set **Asia/Manila**, the correct dentist/host, the clinic address as an in-person location, and actual availability. The current site assumes Monday–Saturday, 9 AM–5 PM, with lunch from noon–1 PM. Confirm or adjust these before live booking. Connect the dentist's calendar if it should block busy times, and confirm that appointment emails are enabled.
 
@@ -58,13 +50,12 @@ No webhook secret or OAuth client secret is needed for this initial API-key inte
 - This `.env` is a local plain-text configuration file, not an encrypted vault. `.gitignore` excludes it from future Git commits, but manual folder sharing or backups can still include it. Share `.env.example` with teammates; give actual credentials through your password manager or provider dashboard.
 - Do not paste real keys into this guide, README, HTML, JavaScript, screenshots, or chat.
 
-When done, say **“Na-fill ko na ang .env; verify the connections.”** We can check the project identity, event types, and availability without showing key values. Restarting the Python process is required to pick up edited `.env` values.
+Run `python check_services.py` to check the configured connections without showing key values. Restart the Python process after editing `.env`.
 
 Database tables still need the reviewed `supabase-setup.sql`, and live auth needs its Supabase settings confirmed. These local files do not create tables, connect accounts, reserve appointments, or turn on live booking automatically.
 
 ## Official references
 
 - [Supabase keys and where to find them](https://supabase.com/docs/guides/getting-started/api-keys)
-- [Supabase MCP project scope](https://supabase.com/docs/guides/ai-tools/mcp)
 - [Cal.com API v2 authentication](https://cal.com/docs/api-reference/v2/introduction)
 - [Cal.com event type ID and configuration](https://cal.com/docs/api-reference/v2/event-types/get-an-event-type)

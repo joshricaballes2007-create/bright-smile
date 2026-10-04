@@ -149,7 +149,7 @@ def seed_cal_bookings(client, db, users):
         if db.execute('select 1 from public.appointments where demo_seed_key = %s', (marker,)).fetchone():
             continue
         # A local journal protects against duplicates after a network interruption. Check muna bago retry.
-        journal = ROOT / '.codex' / 'artifacts' / (marker + '.json')
+        journal = ROOT / '.local-state' / (marker + '.json')
         journal.parent.mkdir(parents=True, exist_ok=True)
         if journal.exists():
             result = json.loads(journal.read_text())

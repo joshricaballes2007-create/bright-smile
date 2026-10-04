@@ -45,8 +45,8 @@ def main():
         else:
             print('GitHub: repository ready; token approval pending')
 
-        # OAuth stays in Codex storage. Hindi natin kino-copy ang private login tokens.
-        print('Vercel: verify the dedicated account through the authorized MCP connection')
+        # Use the project's CLI login. Hindi natin kino-copy ang private login tokens.
+        print('Vercel: verify the dedicated account using the project-local CLI login')
 
 
 if __name__ == '__main__':
