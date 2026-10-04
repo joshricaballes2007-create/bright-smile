@@ -24,7 +24,8 @@ from fastapi.templating import Jinja2Templates
 
 # Read private settings from .env. Hindi naka-print o kasama sa HTML ang secret keys.
 ROOT = Path(__file__).resolve().parent
-load_dotenv(ROOT / '.env')
+# Local settings win over another terminal's keys. Dito lang ang account na gagamitin.
+load_dotenv(ROOT / '.env', override=True)
 MANILA = ZoneInfo('Asia/Manila')
 app = FastAPI(title='Bright Smile', docs_url=None, redoc_url=None, openapi_url=None)
 templates = Jinja2Templates(directory=str(ROOT / 'templates'))

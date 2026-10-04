@@ -13,12 +13,21 @@ TEAM = 'team_9y5dAdr3262ZFDEIkDdI5Aq4'
 DOMAIN = 'bsmile.vercel.app'
 
 
+def cli_environment():
+    # Use the local CLI login, even if another terminal exported a token.
+    # Hindi puwedeng palitan ng ibang project's variables ang chosen account.
+    environment = {key: value for key, value in os.environ.items()
+                   if key not in {'VERCEL_TOKEN', 'VERCEL_ORG_ID', 'VERCEL_PROJECT_ID'}}
+    environment['VERCEL_TELEMETRY_DISABLED'] = '1'
+    return environment
+
+
 def api(path, payload=None):
     # Use the official CLI's local login. Hindi binabasa ang ibang account's global login.
-    command = ['npx.cmd', '--yes', 'vercel@62.2.0', 'api', path, '--global-config', str(ROOT / '.vercel' / 'cli'), '--raw']
+    command = ['npx.cmd', '--yes', 'vercel@62.2.0', 'api', path, '--scope', 'joshua-400f', '--global-config', str(ROOT / '.vercel' / 'cli'), '--raw']
     if payload is not None:
         command += ['--method', 'POST', '--input', '-']
-    result = subprocess.run(command, input=json.dumps(payload) if payload is not None else None, capture_output=True, text=True, encoding='utf-8', cwd=ROOT, env={**os.environ, 'VERCEL_TELEMETRY_DISABLED': '1'})
+    result = subprocess.run(command, input=json.dumps(payload) if payload is not None else None, capture_output=True, text=True, encoding='utf-8', cwd=ROOT, env=cli_environment())
     if result.returncode:
         # Redact known values before showing a CLI error. Walang key na dapat makita dito.
         error = result.stderr
@@ -38,7 +47,10 @@ def main():
     user = api('/v2/user')['user']
     if user.get('email') != 'joshricaballes2007@gmail.com':
         raise RuntimeError('Wrong Vercel account; stopped before changing settings.')
-    domains = api(f'/v9/projects/{PROJECT}/domains?teamId={TEAM}')['domains']
+    project = api(f'/v9/projects/{PROJECT}')
+    if project.get('accountId') != TEAM:
+        raise RuntimeError('Wrong Vercel team; stopped before changing settings.')
+    domains = api(f'/v9/projects/{PROJECT}/domains')['domains']
     if DOMAIN not in [item['name'] for item in domains]:
         raise RuntimeError('Wrong Vercel project; stopped before changing settings.')
     link = json.loads((ROOT / '.vercel' / 'project.json').read_text())
@@ -50,7 +62,7 @@ def main():
     for item in values:
         # The current CLI stores project Secrets through its supported endpoint. Private stdin lang.
         command = ['npx.cmd', '--yes', 'vercel@62.2.0', 'env', 'add', item['key'], 'production', '--force', '--yes', '--sensitive', '--project', PROJECT, '--scope', 'joshua-400f', '--global-config', str(ROOT / '.vercel' / 'cli')]
-        result = subprocess.run(command, input=item['value'], capture_output=True, text=True, encoding='utf-8', cwd=ROOT, env={**os.environ, 'VERCEL_TELEMETRY_DISABLED': '1'}, timeout=90)
+        result = subprocess.run(command, input=item['value'], capture_output=True, text=True, encoding='utf-8', cwd=ROOT, env=cli_environment(), timeout=90)
         if result.returncode:
             raise RuntimeError('Vercel rejected ' + item['key'] + '; private output withheld.')
         print('Production setting saved: ' + item['key'], flush=True)

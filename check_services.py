@@ -39,7 +39,7 @@ def main():
             repo = urlsplit(config.get('PROJECT_GITHUB_REPO_URL', ''))
             if owner == config.get('PROJECT_GITHUB_USERNAME') and repo.hostname == 'github.com' and repo.path == '/' + owner + '/bright-smile':
                 response = client.get('https://api.github.com/repos' + repo.path, headers=headers)
-                print('GitHub:', 'verified private repository' if response.status_code == 200 and response.json().get('private') else 'repository not verified')
+                print('GitHub:', 'verified target repository' if response.status_code == 200 and response.json().get('full_name') == owner + '/bright-smile' else 'repository not verified')
             else:
                 print('GitHub: account or repository mismatch')
         else:

@@ -14,7 +14,7 @@ Paste credentials into the project-root `.env` file. Hindi kailangang ilagay sa 
 | `SUPABASE_PUBLISHABLE_KEY` | Key beginning `sb_publishable_` | Patient signup/login |
 | `SUPABASE_SECRET_KEY` | Key beginning `sb_secret_` | Backend contact-inbox writes; optional until enabling contact |
 
-The Python app loads `.env` using this project's folder path. Environment variables already supplied by the host take priority, so do not set other projects' Supabase keys as machine-wide variables. On Vercel, add these values only to the Bright Smile deployment project.
+The Python app loads this folder's `.env` with priority over inherited terminal settings. Vercel deployments exclude `.env` and use the Bright Smile project's environment variables. Do not put these credentials in machine-wide environment variables or another project's files.
 
 **Scope has a limit:** the keys target a Supabase project, not a Windows folder. A person or app holding a copied key can still use it to reach that same Supabase project. A dedicated project, separate backend key, limited sharing, and table access policies provide the separation. Secret keys bypass RLS and must stay on the backend.
 

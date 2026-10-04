@@ -8,6 +8,7 @@ __pycache__/
 .vercel/
 .pytest_cache/
 .local-state/
+.codex/
 
 .vercel
 .env*

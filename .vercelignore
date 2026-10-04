@@ -4,6 +4,8 @@
 .venv
 .git
 .local-state
+.codex
+learning-materials
 legacy
 tests
 setup_demo.py
