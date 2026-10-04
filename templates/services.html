@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% from 'shared.html' import cta, questions, service_list %}
+{% block content %}
+<!-- The service list comes from Python. Isang listahan lang para walang magkaibang names. -->
+<section class="container page-heading"><span class="section-label">For the everyday and the unexpected</span><h1>A little care goes<br>a long way.</h1><p>Start with what you need. We'll help with what comes next.</p></section>
+<div class="container services-banner"><img src="/static/images/clinic-room.png" alt="A clean and welcoming dental treatment room" width="1536" height="1024"></div>
+<section class="container services-section"><div class="services-layout"><div><span class="section-label">Our services</span><h2>Let's find the<br>right care for you.</h2><p class="muted">Visit lengths are planning estimates.<br>Your dentist will discuss treatment and fees<br>with you before you begin.</p></div>{{ service_list(services) }}</div></section>
+<section class="container visit-steps"><h2>A simpler way to get started.</h2><div class="values-grid"><article><span class="step-number">01</span><h3>Find your care.</h3><p>Choose a checkup, cleaning, or another service.</p></article><article><span class="step-number">02</span><h3>Pick your time.</h3><p>Find a date and time that fit your day.</p></article><article><span class="step-number">03</span><h3>Come as you are.</h3><p>Bring your questions. We'll take it from there.</p></article></div></section>
+{{ questions(faqs) }}{{ cta() }}{% endblock %}

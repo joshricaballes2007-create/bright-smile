@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- This sets the page name and phone size. Para maayos ang display sa kahit anong screen. -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }} | Bright Smile Dental Clinic</title>
+  <meta name="description" content="Thoughtful dental care in San Isidro. Explore Bright Smile's services and plan your next visit.">
+  <meta name="csrf-token" content="{{ csrf }}">
+  <link rel="icon" href="/static/icons/tooth.svg" type="image/svg+xml">
+  <link rel="preload" href="/static/fonts/inter-regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/main.js" defer></script>
+  {% block head %}{% endblock %}
+</head>
+<body class="{% if path == '/' %}home-page{% endif %}">
+  <!-- This shortcut helps keyboard users. Laktaw agad papunta sa main page content. -->
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="brand" aria-label="Bright Smile home"><img src="/static/icons/tooth.svg" alt="" width="31" height="31"><span>bright smile.</span></a>
+      <nav id="main-navigation" class="navigation" aria-label="Main navigation">
+        {% for url, label in [('/', 'Home'), ('/about', 'About us'), ('/services', 'Services'), ('/contact', 'Contact us')] %}
+        <a href="{{ url }}" {% if path == url %}aria-current="page"{% endif %}>{{ label }}</a>
+        {% endfor %}
+        <a class="mobile-book" href="/book">Book an appointment</a>
+      </nav>
+      <div class="header-actions">
+        <a class="account-link" href="/account" aria-label="My account"><img src="/static/icons/user-circle.svg" width="25" height="25" alt=""></a>
+        <a class="button header-book" href="/book">Book a visit <img src="/static/icons/arrow-up-right.svg" alt=""></a>
+        <button class="menu-button" id="menu-button" aria-label="Open menu" aria-expanded="false" aria-controls="main-navigation"><img src="/static/icons/list.svg" width="25" height="25" alt=""></button>
+      </div>
+    </div>
+  </header>
+  <!-- Each page puts its own HTML here. Pareho pa rin ang header at footer. -->
+  <main id="main-content">{% block content %}{% endblock %}</main>
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div><a class="brand" href="/"><img src="/static/icons/tooth.svg" alt="" width="29" height="29"><span>bright smile.</span></a><p>A little care today.<br>A healthier smile tomorrow.</p></div>
+        <div><h2>Discover</h2><a href="/about">About us</a><a href="/services">Our services</a><a href="/book">Book a visit</a></div>
+        <div><h2>Let's connect</h2><a href="/contact">Contact us</a><a href="/account">Patient account</a><a href="/privacy">Privacy notice</a></div>
+        <div><h2>Come say hello</h2><p>{{ clinic.address }}</p><p>Monday–Saturday<br>9:00 AM–5:00 PM</p><span class="small">Lunch break: 12:00–1:00 PM</span></div>
+      </div>
+      <div class="footer-bottom"><span>© {{ year }} Bright Smile Dental Clinic</span><span>Made with care. For your smile.</span></div>
+      <p class="prototype-credit">ICCT case-study website · Hoyohoy, Cadiang, Caballes, Evangelista &amp; Menor</p>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,8 @@
+# Vercel reads this to find Python. Para alam nito kung saan magsisimula.
+[project]
+name = "bright-smile-clinic"
+version = "1.0.0"
+requires-python = ">=3.12"
+
+[tool.vercel]
+entrypoint = "app:app"

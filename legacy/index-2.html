@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bright Smile Dental Clinic – Online Appointment & Queue System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style-1.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#/" aria-label="Bright Smile Dental Clinic home">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3.2C10 1.7 6 1.9 4.9 5.2c-.9 2.9.7 5 1.3 7.5.6 2.5.8 8.1 2.7 8.1 1.6 0 1.4-4.2 3.1-4.2s1.5 4.2 3.1 4.2c1.9 0 2.1-5.6 2.7-8.1.6-2.5 2.2-4.6 1.3-7.5C18 1.9 14 1.7 12 3.2z"/></svg>
+      Bright Smile
+    </a>
+    <button class="burger" data-act="navToggle" aria-expanded="false" aria-controls="mainnav">Menu</button>
+    <nav class="main" id="mainnav" aria-label="Main">
+      <a href="#/" data-r="/">Home</a>
+      <a href="#/book" data-r="/book">Book appointment</a>
+      <a href="#/track" data-r="/track">Track my visit</a>
+      <a href="#/account" data-r="/account">My account</a>
+      <a href="#/staff" data-r="/staff">Staff &amp; admin</a>
+    </nav>
+  </div>
+</header>
+
+<main id="app"></main>
+
+<footer class="foot">
+  <div class="wrap">
+    <p><b>Bright Smile Dental Clinic</b> · Rizal Street, San Isidro. This is a case-study prototype of the Online Appointment and Queue Management System, ICCT Information Technology Department (CC02 and WS1).</p>
+    <p>Proponents: Hoyohoy, Frederick · Cadiang, Kian · Caballes, Joshua · Evangelista, Jessa R. · Menor, Shane Dominick</p>
+  </div>
+</footer>
+
+<dialog id="dlg" aria-label="Dialog"></dialog>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="script-1.js"></script>
+</body>
+</html>

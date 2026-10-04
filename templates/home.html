@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% from 'shared.html' import button, cta, questions, service_list %}
+{% block head %}<link rel="preload" href="/static/images/dentist-hero.png" as="image">{% endblock %}
+{% block content %}
+<!-- The doctor has a real clear background. Kita ang blue page sa likod ng photo. -->
+<section class="hero"><div class="container hero-inner">
+  <div class="hero-copy"><h1>A little care.<br>A brighter smile.<br>A healthier you.</h1><div class="numbered-copy"><span>(001)</span><div><p>Feel good about going to the dentist.<br>Thoughtful care, clear answers, and a visit<br class="desktop-break"> that fits into your day.</p>{{ button() }}</div></div></div>
+  <img class="hero-doctor" src="/static/images/dentist-hero.png" alt="Illustrative portrait of a friendly dentist in a white coat" fetchpriority="high" width="1024" height="1536">
+  <span class="hero-side-note">GOOD CARE. BRIGHTER DAYS.</span>
+</div></section>
+<!-- These cards explain the clinic without made-up numbers. Walang fake patient statistics. -->
+<section class="container hero-cards" aria-label="Care at Bright Smile">
+  <div class="intro-card"><span class="card-index">01 / A human touch</span><h2>One clinic.<br>Care that knows you.</h2><p>A familiar face. A listening ear.<br>A little more peace of mind.</p><a href="/about" class="round-link" aria-label="Get to know Bright Smile"><img src="/static/icons/arrow-up-right.svg" alt=""></a></div>
+  <div class="booking-card"><div><span class="card-index">02 / A simpler visit</span><h2>Your next visit,<br>minus the wait.</h2><p>Choose your care. Find your time.<br>We'll take it from there.</p></div><div class="mini-visit"><div><img src="/static/icons/calendar-blank.svg" alt=""><span>Your smile, on schedule</span></div><strong>Pick a day that<br>works for you.</strong><a href="/book">Let's find a time <img src="/static/icons/arrow-right.svg" alt=""></a></div></div>
+</section>
+<div class="container care-strip"><span>Care for every chapter</span><span>Checkups</span><span>Cleaning</span><span>Fillings</span><span>Extractions</span><span>Follow-ups</span></div>
+<section class="container care-section">
+  <div class="section-heading"><h2>Your smile deserves<br>more than just okay.</h2><p>Dental visits can feel like a lot. We're here to make them<br class="desktop-break"> simpler, more comfortable, and a little more human.</p></div>
+  <div class="care-grid">
+    <article class="care-tile mint"><img class="tile-icon" src="/static/icons/heart.svg" alt=""><div><h3>People first. Always.</h3><p>Your questions matter. We make time to listen and explain.</p></div></article>
+    <article class="care-photo"><img src="/static/images/clinic-care.png" alt="Illustrative dental consultation in a bright clinic" loading="lazy" width="1536" height="1024"><div><span>Care that feels personal</span><h3>Less worry.<br>More reasons to smile.</h3></div></article>
+    <article class="care-tile pale-blue"><img class="tile-icon" src="/static/icons/calendar-blank.svg" alt=""><div><h3>Your day, your time.</h3><p>Plan your appointment around life, not the other way around.</p><a class="text-link" href="/book">Choose your visit <img src="/static/icons/arrow-up-right.svg" alt=""></a></div></article>
+    <article class="care-tile neutral"><img class="tile-icon" src="/static/icons/shield-check.svg" alt=""><div><h3>No confusing next steps.</h3><p>Understand your care before you get started.</p></div></article>
+    <article class="care-tile peach"><img class="tile-icon" src="/static/icons/sparkle.svg" alt=""><div><h3>Small steps. Healthy habits.</h3><p>From your first checkup to your next follow-up, we're here.</p></div></article>
+  </div>
+</section>
+<section class="container story-section"><div class="story-image"><img src="/static/images/clinic-room.png" alt="Bright dental chair and clean clinic space" loading="lazy" width="1536" height="1024"><span class="image-caption">A space to feel at ease.</span></div><div class="story-copy"><span class="section-label">Good care, close to home</span><h2>Not just your teeth.<br>The person<br>behind the smile.</h2><p>A dental visit should start with a conversation. At Bright Smile, we focus on what you need, help you understand your options, and take things one step at a time.</p>{{ button('/about', 'Get to know us') }}</div></section>
+<section class="container services-section"><div class="section-heading left"><span class="section-label">A little help for your smile</span><h2>Everyday care.<br>Thoughtfully done.</h2></div><div class="services-layout"><div><p class="muted">From a routine checkup to that tooth<br>that's been bothering you, let's find<br>the right next step.</p>{{ button('/services', 'Explore our services') }}</div>{{ service_list(services[:4]) }}</div></section>
+{{ questions(faqs) }}{{ cta() }}
+{% endblock %}

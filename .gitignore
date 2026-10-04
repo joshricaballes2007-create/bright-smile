@@ -1,0 +1,10 @@
+# Keep passwords and installed tools private. Hindi sila kasama sa project upload.
+.env
+.env.*
+!.env.example
+.venv/
+__pycache__/
+*.pyc
+.vercel/
+.pytest_cache/
+.codex/

@@ -1,0 +1,8 @@
+# These tools help Python show pages and talk to services. Naka-pin ang versions para pareho ang setup.
+fastapi==0.142.2
+uvicorn==0.54.0
+jinja2==3.1.6
+httpx==0.28.1
+python-dotenv==1.2.4
+# Windows needs the timezone list too. Para laging Manila time ang appointments.
+tzdata==2026.5

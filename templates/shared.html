@@ -1,0 +1,19 @@
+<!-- These small pieces are reused across pages. Isang edit lang para pareho lahat. -->
+{% macro button(url='/book', text='Book an appointment') -%}
+<a href="{{ url }}" class="button">{{ text }}<img src="/static/icons/arrow-up-right.svg" alt=""></a>
+{%- endmacro %}
+
+{% macro cta() -%}
+<section class="visit-cta container"><div class="cta-copy"><h2>A healthier smile<br>starts with a hello.</h2><p>Let's make your next dental visit a good one.</p>{{ button('/book', 'Find your time') }}</div><span class="cta-word" aria-hidden="true">bright smile.</span></section>
+{%- endmacro %}
+
+{% macro questions(faqs) -%}
+<section class="container faq-section"><div><span class="section-label">A little clarity</span><h2>Good questions.<br>Simple answers.</h2><p class="muted">Everything you need to feel ready<br>for your next visit.</p></div><div class="faq-list">
+  <!-- The browser opens these answers even without JavaScript. Gumagana kahit walang script. -->
+  {% for question, answer in faqs %}<details class="faq-item" {% if loop.first %}open{% endif %}><summary>{{ question }}<img src="/static/icons/plus.svg" alt=""></summary><p>{{ answer }}</p></details>{% endfor %}
+</div></section>
+{%- endmacro %}
+
+{% macro service_list(services) -%}
+<div class="service-list">{% for service in services %}<details class="service-row" {% if loop.first %}open{% endif %}><summary><span><span class="service-number">0{{ loop.index }}</span>{{ service.name }}</span><img src="/static/icons/arrow-up-right.svg" alt=""></summary><div><p>{{ service.description }}</p><span class="small muted">Planned visit · {{ service.minutes }} minutes</span><a class="text-link" href="/book?service={{ service.id }}">Book this service <img src="/static/icons/arrow-right.svg" alt=""></a></div></details>{% endfor %}</div>
+{%- endmacro %}
