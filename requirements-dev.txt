@@ -1,2 +1,0 @@
-# SQL setup uses this local tool only. Hindi kailangan sa Vercel website runtime.
-psycopg[binary]==3.3.6

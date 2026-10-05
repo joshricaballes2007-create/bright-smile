@@ -8,10 +8,5 @@
 learning-materials
 legacy
 tests
-setup_demo.py
-check_services.py
-deploy_services.py
-requirements-dev.txt
-demo-report.*
 supabase-setup.sql
 *.md

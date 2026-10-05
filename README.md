@@ -52,7 +52,7 @@ if (-not (Test-Path .env)) { Copy-Item .env.example .env }
 .venv/Scripts/python.exe -m uvicorn app:app --reload
 ```
 
-Open [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser. Keep private keys in `.env` and out of GitHub. See [CONNECT-SERVICES.md](CONNECT-SERVICES.md) for the Supabase and Cal.com settings.
+Open [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser. Keep private keys in `.env` and out of GitHub. For live services, fill in the Supabase and Cal.com settings in `.env`. The production website URL is `https://bsmile.vercel.app`.
 
 To run the existing checks:
 
